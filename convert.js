@@ -304,13 +304,13 @@ module.exports.convert = async (file, players, getNewName) => {
   // Write to file
   const REPLAY_JSON = JSON.stringify(REPLAY, undefined, 2);
   fs.writeFileSync(workFile, REPLAY_JSON);
-  // fs.renameSync(`replays/${file}.replay`, `replays/processed/${file}.replay`);
+  fs.renameSync(`replays/${file}.replay`, `replays/processed/${file}.replay`);
 
   execSync(
     `bin\\rattletrap-12.0.1-windows.exe -m encode -i "${workFile}" -o "replays/out/${file}.anonymous.replay"`
   );
 
-  // fs.rmSync(workFile);
+  fs.rmSync(workFile);
 
   console.log(`  \u2713 ${((Date.now() - start) / 1000).toFixed(3)}s`);
 };
