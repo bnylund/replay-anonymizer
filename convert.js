@@ -298,7 +298,11 @@ module.exports.convert = async (file, players, getNewName) => {
     REPLAY.header.body.properties.keys.push("ReplayName");
 
   REPLAY.content.body.names = REPLAY.content.body.names.filter(
-    (x) => !x.startsWith("RP") && !x.startsWith("S") && !x.startsWith("E")
+    (x) =>
+      !x.startsWith("RP") &&
+      !x.startsWith("S") &&
+      !x.startsWith("E") &&
+      !x.startsWith("FR")
   );
 
   // Write to file
