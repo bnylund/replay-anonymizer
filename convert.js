@@ -200,6 +200,7 @@ module.exports.convert = async (file, players, getNewName) => {
           } else if (
             upd.name === "TAGame.CameraSettingsActor_TA:ProfileSettings"
           ) {
+            // Use the same cam settings for all players
             upd.value.cam_settings = {
               angle: -3,
               distance: 270,
@@ -210,14 +211,28 @@ module.exports.convert = async (file, players, getNewName) => {
               transition_speed: 1.8,
             };
           } else if (upd.name === "TAGame.PRI_TA:ClientLoadoutsOnline") {
+            // Use default car loadout
             upd.value.loadouts_online.blue = DEFAULT_LOADOUT;
             upd.value.loadouts_online.orange = DEFAULT_LOADOUT;
           } else if (upd.name === "TAGame.PRI_TA:ClientLoadouts") {
+            // Force default octane (even conflicting hitboxes)
             upd.value.loadouts.blue = DEFAULT_OCTANE;
             upd.value.loadouts.orange = DEFAULT_OCTANE;
           } else if (upd.name === "TAGame.Car_TA:TeamPaint") {
+            // Use default paint colors
             upd.value.team_paint =
               upd.value.team_paint.team === 0 ? DEFAULT_BLUE : DEFAULT_ORANGE;
+          } else if (
+            upd.name === "TAGame.CameraSettingsActor_TA:bUsingBehindView"
+          ) {
+            // Disable rear-view
+            upd.value.boolean = false;
+          } else if (upd.name === "TAGame.PRI_TA:ClubID") {
+            // Disable player club
+            upd.value.int64 = "0";
+          } else if (upd.name === "TAGame.Team_TA:ClubID") {
+            // Disable team club
+            upd.value.int64 = "0";
           }
         }
       } else if (value.spawned) {
@@ -289,13 +304,13 @@ module.exports.convert = async (file, players, getNewName) => {
   // Write to file
   const REPLAY_JSON = JSON.stringify(REPLAY, undefined, 2);
   fs.writeFileSync(workFile, REPLAY_JSON);
-  fs.renameSync(`replays/${file}.replay`, `replays/processed/${file}.replay`);
+  // fs.renameSync(`replays/${file}.replay`, `replays/processed/${file}.replay`);
 
   execSync(
     `bin\\rattletrap-12.0.1-windows.exe -m encode -i "${workFile}" -o "replays/out/${file}.anonymous.replay"`
   );
 
-  fs.rmSync(workFile);
+  // fs.rmSync(workFile);
 
   console.log(`  \u2713 ${((Date.now() - start) / 1000).toFixed(3)}s`);
 };
