@@ -237,42 +237,47 @@ module.exports.convert = async (file, players, getNewName) => {
 
   const now = new Date();
   REPLAY.header.body.properties.value.Date.value.str = `${now.getFullYear()}-${now.getMonth()}-${now.getDate()} ${now.getHours()}-${now.getMinutes()}-${now.getSeconds()}`;
-  const goals = REPLAY.header.body.properties.value.Goals.value.array;
-  for (let i = 0; i < goals.length; i++) {
-    try {
-      const nn =
-        map[
-          Object.keys(map).find(
-            (x) => map[x].name === goals[i].value.PlayerName.value.str
-          )
-        ];
-      goals[i].value.PlayerName.value.str = nn.anonymous_name;
-      goals[i].value.PlayerName.size = String(nn.anonymous_name.length + 5);
-    } catch (err) {
-      /* Will throw an error for bots */
-    }
-  }
 
-  const stats = REPLAY.header.body.properties.value.PlayerStats.value.array;
-  for (let i = 0; i < stats.length; i++) {
-    try {
-      const pl =
-        map[
-          Object.keys(map).find(
-            (x) => map[x].name === stats[i].value.Name.value.str
-          )
-        ];
-      stats[i].value.Name.value.str = pl.name;
-      stats[i].value.Name.size = String(pl.name.length + 5);
-      stats[i].value.OnlineID.value.q_word = pl.anonymous_platform_id;
-      stats[i].value.Platform.value.byte = [
-        "OnlinePlatform",
-        "OnlinePlatform_Steam",
-      ];
-    } catch (err) {
-      /* Will also throw an error for bots */
+  try {
+    const goals = REPLAY.header.body.properties.value.Goals.value.array;
+    for (let i = 0; i < goals.length; i++) {
+      try {
+        const nn =
+          map[
+            Object.keys(map).find(
+              (x) => map[x].name === goals[i].value.PlayerName.value.str
+            )
+          ];
+        goals[i].value.PlayerName.value.str = nn.anonymous_name;
+        goals[i].value.PlayerName.size = String(nn.anonymous_name.length + 5);
+      } catch (err) {
+        /* Will throw an error for bots */
+      }
     }
-  }
+  } catch (err) {}
+
+  try {
+    const stats = REPLAY.header.body.properties.value.PlayerStats.value.array;
+    for (let i = 0; i < stats.length; i++) {
+      try {
+        const pl =
+          map[
+            Object.keys(map).find(
+              (x) => map[x].name === stats[i].value.Name.value.str
+            )
+          ];
+        stats[i].value.Name.value.str = pl.name;
+        stats[i].value.Name.size = String(pl.name.length + 5);
+        stats[i].value.OnlineID.value.q_word = pl.anonymous_platform_id;
+        stats[i].value.Platform.value.byte = [
+          "OnlinePlatform",
+          "OnlinePlatform_Steam",
+        ];
+      } catch (err) {
+        /* Will also throw an error for bots */
+      }
+    }
+  } catch (err) {}
 
   if (!REPLAY.header.body.properties.keys.includes("ReplayName"))
     REPLAY.header.body.properties.keys.push("ReplayName");
